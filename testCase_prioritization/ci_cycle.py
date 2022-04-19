@@ -10,8 +10,21 @@ class CICycleLog:
     def __init__(self, cycle_id: int):
         self.cycle_id = cycle_id
         self.test_cases = []
-    def add_test_case_enriched(self, cycle_id, test_id, test_suite, last_exec_time, verdict, avg_exec_time,
-                               failure_history=[], rest_hist=[], complexity_metrics=[]):
+
+    def add_test_case_enriched(self, cycle_id, test_id, test_suite, last_exec_time, verdict, avg_exec_time,failure_history=[], rest_hist=[], complexity_metrics=[]):
+        """Adds test case to enriched test case list
+
+        Args:
+            cycle_id (_type_): _description_
+            test_id (_type_): _description_
+            test_suite (_type_): _description_
+            last_exec_time (_type_): _description_
+            verdict (_type_): _description_
+            avg_exec_time (_type_): _description_
+            failure_history (list, optional): _description_. Defaults to [].
+            rest_hist (list, optional): _description_. Defaults to [].
+            complexity_metrics (list, optional): _description_. Defaults to [].
+        """
         test_case:dict = {}
         test_case['test_id'] = test_id
         test_case['test_suite'] = test_suite
@@ -26,16 +39,31 @@ class CICycleLog:
         test_case['other_metrics'] = rest_hist.copy()
         self.test_cases.append(test_case)
 
-    def add_test_case(self,  cycle_id, test_id, test_suite, avg_exec_time: int, last_exec_time: int, verdict: int,
-                      failure_history: list, duration_group, time_group, exec_time_history: list):
+
+    def add_test_case(self, test_id, test_suite, avg_exec_time: int, last_exec_time: int, verdict: int,failure_history: list, exec_time_history: list):
+        """
+        Adds test case to the test case list
+
+        Args:
+            cycle_id (_type_): _description_
+            test_id (_type_): _description_
+            test_suite (_type_): _description_
+            avg_exec_time (int): _description_
+            last_exec_time (int): _description_
+            verdict (int): _description_
+            failure_history (list): _description_
+            duration_group (_type_): _description_
+            time_group (_type_): _description_
+            exec_time_history (list): _description_
+        """
         test_case:dict = {}
         test_case['test_id'] = test_id
         test_case['test_suite'] = test_suite
         test_case['avg_exec_time'] = avg_exec_time
         test_case['verdict'] = verdict
-        test_case['duration_group'] = duration_group
-        test_case['time_group'] = time_group
-        test_case['cycle_id'] = cycle_id
+        # test_case['duration_group'] = duration_group
+        # test_case['time_group'] = time_group
+        # test_case['cycle_id'] = cycle_id
         test_case['last_exec_time'] = last_exec_time
         if failure_history:
             test_case['failure_history'] = failure_history
@@ -48,10 +76,27 @@ class CICycleLog:
         self.test_cases.append(test_case)
 
     def rem_test_case(self, test_id):
+        """Returns the test case with the test_id
+
+        Args:
+            test_id (_type_): _description_
+        """
         if self.test_cases[test_id]:
             del self.test_cases[test_id]
 
     def export_test_cases(self, option: str, pad_digit=9, max_test_cases_count=0, winsize=4, test_case_vector_size=7):
+        """Exports array of test cases with details about test case in form of test case vector
+
+        Args:
+            option (str): _description_
+            pad_digit (int, optional): _description_. Defaults to 9.
+            max_test_cases_count (int, optional): _description_. Defaults to 0.
+            winsize (int, optional): _description_. Defaults to 4.
+            test_case_vector_size (int, optional): _description_. Defaults to 7.
+
+        Returns:
+            _type_: _description_
+        """
         if option == "list_avg_exec_with_failed_history":
             # assume param1 refers to the number of test cases,
             # params 2 refers to the history windows size, and param3 refers to pa
@@ -70,6 +115,17 @@ class CICycleLog:
             return None
 
     def export_test_case(self, test_case: dict, option: str, pad_digit=9, win_size=4):
+        """Returns the test case vector containing details about test case failure history and its average complexity/other matrix and time group and duration group and avearge execution time and age
+
+        Args:
+            test_case (dict): _description_
+            option (str): _description_
+            pad_digit (int, optional): _description_. Defaults to 9.
+            win_size (int, optional): _description_. Defaults to 4.
+
+        Returns:
+            _type_: _description_
+        """
         if option == "list_avg_exec_with_failed_history":
             # assume param1 refers to the number of test cases,
             # params 2 refers to the history windows size, and param3 refers to pa
@@ -115,7 +171,18 @@ class CICycleLog:
             return test_case_vector
         else:
             return None
+
+
     def get_test_case_vector_length(self,test_case,win_size):
+        """Return length of test case vector
+
+        Args:
+            test_case (_type_): _description_
+            win_size (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         extra_length = 4
         if 'complexity_metrics' in test_case.keys():
             extra_length = extra_length + len(test_case['complexity_metrics'])
@@ -125,6 +192,15 @@ class CICycleLog:
         return win_size + extra_length
 
     def calc_APFD_vector_porb(self, test_case_vector_prob: list, threshold: float):
+        """Calculate APFD score for test case list sorted by probability
+
+        Args:
+            test_case_vector_prob (list): _description_
+            threshold (float): _description_
+
+        Returns:
+            _type_: _description_
+        """
         sum_ranks: float = 0
         apfd: float = 0
         i = 1
@@ -139,6 +215,14 @@ class CICycleLog:
         return apfd
 
     def calc_APFD_ordered_vector(self, test_case_vector: list):
+        """Calculated APFD score for orderest test case vector sorted according to verdict
+
+        Args:
+            test_case_vector (list): _description_
+
+        Returns:
+            _type_: _description_
+        """
         sum_ranks: float = 0
         apfd: float = 0
         i = 1
@@ -152,12 +236,32 @@ class CICycleLog:
         return apfd
 
     def get_optimal_order(self):
+        """Returns optimal order of the test cases
+            first test cases are sorted by verdict (pass / fail)    
+                    with fail as priority 
+            Among the failed test cases, test case 
+                    with lease execution time are given priority and 
+            same among the passed test cases
+
+
+        Returns:
+            _type_: _description_
+        """
         optimal_order_by_verdict = copy.deepcopy(sorted(self.test_cases, key=lambda x: x['verdict'], reverse=True))
         optimal_order = []
         optimal_order.extend(sorted(optimal_order_by_verdict[0:self.get_failed_test_cases_count()], key=lambda x: x['last_exec_time']))
         optimal_order.extend(sorted(optimal_order_by_verdict[self.get_failed_test_cases_count():], key=lambda x: x['last_exec_time']))
         return optimal_order
+        
     def calc_RPA_vector(self, test_case_vector: list):
+        """Calculates RPA score for the test case vector
+
+        Args:
+            test_case_vector (list): _description_
+
+        Returns:
+            _type_: _description_
+        """
         ranks = []
         optimal_order = self.get_optimal_order()
         i = 0
@@ -166,11 +270,31 @@ class CICycleLog:
         return self.calc_score_ranking(ranks)
 
     def calc_NRPA_vector(self,test_case_vector: list):
+        """Caculates NRPA score for test cases 
+
+        Args:
+            test_case_vector (list): _description_
+
+        Returns:
+            _type_: _description_
+        """
         RPA = self.calc_RPA_vector(test_case_vector)
         ORPA = self.get_optimal_RPA(self.get_test_cases_count())
         return RPA/ORPA
 
     def calc_score_ranking(self, ranks: list):
+        """Calculates score ranking
+        
+        ranking happens using ( total test cases -(minus) optimal index of test case)
+
+        => score => 0*len(ranks) + 1*len(ranks) ..... ranks[len(ranks)] * len(ranks)
+
+        Args:
+            ranks (list): _description_
+
+        Returns:
+            _type_: _description_
+        """
         if not ranks:
             return 0
         elif len(ranks) <= 1:
@@ -179,6 +303,14 @@ class CICycleLog:
             return ranks[0]*len(ranks) + self.calc_score_ranking(ranks[1:])
 
     def calc_APFD(self, ordered_test_cases_id):
+        """Calculates APFD score for sorted order of test cases
+
+        Args:
+            ordered_test_cases_id (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         sum_ranks: float = 0
         apfd: float = 0
         ordered_test_cases_temp=[]
@@ -196,6 +328,11 @@ class CICycleLog:
         return apfd
 
     def calc_random_APFD(self):
+        """Calculates APFD score for random not particularly sorted order of test cases
+
+        Returns:
+            _type_: _description_
+        """
         random_order = []
         while len(random_order) < self.get_test_cases_count():
             rand_num = random.randint(0, self.get_test_cases_count())
@@ -205,6 +342,11 @@ class CICycleLog:
         return random_apfd
 
     def calc_optimal_APFD(self):
+        """Calculates optimal APFD for the sorted test cases
+
+        Returns:
+            _type_: _description_
+        """
         optimal_order = sorted(self.test_cases, key=lambda x: x['verdict'], reverse=True)
         sum_ranks = 0
         i = 1
@@ -219,6 +361,11 @@ class CICycleLog:
         return apfd
 
     def get_failed_test_cases_count(self):
+        """Returns count of test case with verdic == 1
+
+        Returns:
+            _type_: _description_
+        """
         cnt = 0
         for test_case in self.test_cases:
             if test_case['verdict'] == 1:
@@ -229,6 +376,11 @@ class CICycleLog:
         return len(self.test_cases)
 
     def get_passed_test_cases_count(self):
+        """Return count of test cases with verdict == 0 (pass)
+
+        Returns:
+            _type_: _description_
+        """
         cnt = 0
         for test_case in self.test_cases:
             if test_case['verdict'] == 0:
@@ -236,15 +388,38 @@ class CICycleLog:
         return cnt
 
     def get_max_last_exec_time(self):
+        """Returns execution time of test case having highest execution time
+
+        Returns:
+            _type_: _description_
+        """
         return max(self.test_cases, key=lambda x: x['last_exec_time'])['last_exec_time']
 
     def get_min_last_exec_time(self):
+        """Returns execution time of test case having lowest execution time
+
+        Returns:
+            _type_: _description_
+        """
         return min(self.test_cases, key=lambda x: x['last_exec_time'])['last_exec_time']
 
     def get_test_case_last_exec_time(self, test_case_index: int):
+        """Returns execution time of test case with given index
+
+        Returns:
+            _type_: _description_
+        """
         return self.test_cases[test_case_index]['last_exec_time']
 
     def get_test_case_last_exec_time_normalized(self, test_case_index: int):
+        """Returns normalized execution time of test case with given test_case index
+
+        Args:
+            test_case_index (int): _description_
+
+        Returns:
+            _type_: _description_
+        """
         last_exec_time: int = self.get_test_case_last_exec_time(test_case_index)
         min_last_exec_time = self.get_min_last_exec_time()
         max_last_exec_time = self.get_max_last_exec_time()
@@ -261,4 +436,12 @@ class CICycleLog:
             return (n*n) + self.get_optimal_RPA(n-1)
 
     def get_test_case_verdict(self, test_case_index: int):
+        """Return verdict of test case (pass->0 / fail->1)
+
+        Args:
+            test_case_index (int): _description_
+
+        Returns:
+            _type_: _description_
+        """
         return self.test_cases[test_case_index]['verdict']
