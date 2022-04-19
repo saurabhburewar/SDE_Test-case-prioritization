@@ -5,10 +5,10 @@ import os
 
 
 
-from testCase_prioritization.PointWiseEnv import CIPointWiseEnv
-from testCase_prioritization.TPPointWiseAgent import TPPointWisePPO2Agent
-from testCase_prioritization.ci_cycle import CICycleLog
-from testCase_prioritization.Config import Config
+from PointWiseEnv import CIPointWiseEnv
+from TPPointWiseAgent import TPPointWisePPO2Agent
+from ci_cycle import CICycleLog
+from Config import Config
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='DNN debugger')
@@ -66,7 +66,7 @@ for i in range(min_cycle, max_cycle + 1):
 
 first_round = True
 tp_agent = TPPointWisePPO2Agent()
-f = open("../models/evaluation_pointwise_10000_paint_controller_winsize_5_logs.txt", "a")
+f = open("../evaluation_pointwise_10000_paint_controller_winsize_5_logs.txt", "a")
 f.write("cycle_id,test_cases,failed_test_cases,apfd,random_apfd,optimal_apfd" + os.linesep)
 for i in range(conf.first_cycle, conf.first_cycle + conf.cycle_count - 1):
     if ci_cycle_logs[i].get_test_cases_count() <= 1 or ci_cycle_logs[i].get_failed_test_cases_count() <= 1:
@@ -74,11 +74,11 @@ for i in range(conf.first_cycle, conf.first_cycle + conf.cycle_count - 1):
     print("Training agent with replaying of cycle " + str(i))
     env = CIPointWiseEnv(ci_cycle_logs[i], conf)
     if first_round:
-        model = tp_agent.train_agent(env, 100000, conf.output_path+"_pointwise_10000_paint_controller_winsize_5_" +
+        model = tp_agent.train_agent(env, 100, conf.output_path+"_pointwise_10000_paint_controller_winsize_5_" +
                                      str(conf.first_cycle) + "_" + str(i))
         first_round = False
     else:
-        model = tp_agent.train_agent(env=env, steps=100000,
+        model = tp_agent.train_agent(env=env, steps=100,
                                      path_to_save_agent=conf.output_path+"_pointwise_10000_paint_controller_winsize_5_"
                                                         + str(conf.first_cycle) + "_" + str(i),
                                      base_model=model)
