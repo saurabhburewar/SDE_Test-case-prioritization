@@ -1,7 +1,7 @@
 from stable_baselines.common.policies import MlpPolicy
 from stable_baselines.common.vec_env import DummyVecEnv
 from stable_baselines import PPO2
-from testCase_prioritization.PointWiseEnv import CIPointWiseEnv
+from PointWiseEnv import CIPointWiseEnv
 import time
 from wrapt_timeout_decorator import *
 
