@@ -76,26 +76,10 @@ def experiment(mode, algo, test_case_data, start_cycle, end_cycle, episodes, mod
                 ((conf.dataset_type == "simple") and
                  (test_case_data[i].get_failed_test_cases_count() < 1)):
             continue
-        if mode.upper() == 'PAIRWISE':
-            N = test_case_data[i].get_test_cases_count()
-            steps = int(episodes * (N * (math.log(N, 2)+1)))
-            env = CIPairWiseEnv(test_case_data[i], conf)
-        elif mode.upper() == 'POINTWISE':
-            N = test_case_data[i].get_test_cases_count()
-            steps = int(episodes * (N * (math.log(N, 2)+1)))
-            env = CIPointWiseEnv(test_case_data[i], conf)
-        elif mode.upper() == 'LISTWISE':
-            conf.max_test_cases_count = get_max_test_cases_count(
-                test_case_data)
-            N = test_case_data[i].get_test_cases_count()
-            steps = int(episodes * (N * (math.log(N, 2)+1)))
-            env = CIListWiseEnv(test_case_data[i], conf)
-        elif mode.upper() == 'LISTWISE2':
-            conf.max_test_cases_count = get_max_test_cases_count(
-                test_case_data)
-            N = test_case_data[i].get_test_cases_count()
-            steps = int(episodes * (N * (math.log(N, 2)+1)))
-            env = CIListWiseEnvMultiAction(test_case_data[i], conf)
+            
+        N = test_case_data[i].get_test_cases_count()
+        steps = int(episodes * (N * (math.log(N, 2)+1)))
+        env = CIPairWiseEnv(test_case_data[i], conf)
         print("Training agent with replaying of cycle " +
               str(i) + " with steps " + str(steps))
 
@@ -131,14 +115,8 @@ def experiment(mode, algo, test_case_data, start_cycle, end_cycle, episodes, mod
             j = j+1
         if j >= end_cycle-1:
             break
-        if mode.upper() == 'PAIRWISE':
-            env_test = CIPairWiseEnv(test_case_data[j], conf)
-        elif mode.upper() == 'POINTWISE':
-            env_test = CIPointWiseEnv(test_case_data[j], conf)
-        elif mode.upper() == 'LISTWISE':
-            env_test = CIListWiseEnv(test_case_data[j], conf)
-        elif mode.upper() == 'LISTWISE2':
-            env_test = CIListWiseEnvMultiAction(test_case_data[j], conf)
+
+        env_test = CIPairWiseEnv(test_case_data[j], conf)
 
         test_time_start = datetime.now()
         test_case_vector = TPAgentUtil.test_agent(
